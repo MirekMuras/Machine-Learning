@@ -30,3 +30,19 @@ function distance(point) {
   return Math.abs(point - predictionPoint);
 }
 
+// @dev: split dataset into two subsets "training" set & "test" set
+// @info: function  SPLITDATASET(data, testCount), where current dataset is input and testCount is output
+function splitDataset(data, testCount) {
+  const shuffled = _.shuffle(data);                   // suffle dataset
+
+  const testSet = _.slice(shuffled, 0, testCount);    // test = shuffled data from 0 to testCount
+  const trainSet = _.slice(shuffled, testCount)       // trainSet = shuffled data from testCount to the end
+
+  return [testSet, trainSet];
+
+
+
+  
+
+}
+
