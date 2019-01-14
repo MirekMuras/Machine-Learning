@@ -1,0 +1,26 @@
+{
+  "name": "machine-learning",
+  "version": "1.0.0",
+  "description": "Starter projects for learning about Machine Learning.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MirekMuras/Machine-Learning.git"
+  },
+  "author": "Miroslav Muras",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MirekMuras/Machine-Learning/issues"
+  },
+  "homepage": "https://github.com/MirekMuras/Machine-Learning#readme",
+  "dependencies": {
+    "prettier": "^1.15.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-config-google": "^0.11.0"
+  }
+}
