@@ -1,6 +1,6 @@
-# ML Kits
+# Machine Learning Kit using JavaScript
 
-Starter projects for learning about Machine Learning.
+Starter projects for learning about Machine Learning using Tenserflow .JS library.
 
 ## Downloading
 

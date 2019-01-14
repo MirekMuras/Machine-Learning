@@ -11,31 +11,37 @@ function onScoreUpdate(dropPosition, bounciness, size, bucketLabel) {
 function runAnalysis() {
   // code here to analyze stuff
   const testSetSize = 50;
-  const [testSet, trainingSet] = splitDataset(minMAX(outputs,3), testSetSize);
-
- 
-  _.range(1,15).forEach( k => {
+  const k = 10;
+   
+  _.range(0, 3).forEach( feature => {
+   const data = _.map(outputs, row => [row[feature], _.last(row)]);
+    const [testSet, trainingSet] = splitDataset(minMAX(data, 1), testSetSize);
      const accuracy =  _.chain(testSet)
     .filter(
-      testPoint => knn(trainingSet, _.initial(testPoint), k) === testPoint[3]
-      )
+      testPoint => knn(trainingSet, _.initial(testPoint), k) === _.last(testPoint) )
     .size()
     .divide(testSetSize)
     .value();
 
-    console.log('For each k of ',k,' accuracy using KNN algorithm is ', accuracy);
+    console.log('For feature of ',feature,' accuracy using KNN algorithm is ', accuracy);
   });
-
 }
 
 /**********************************************************************************/
 
-// IF Prediction was bad !
-// 1) Adjust the parameters of the analysis
-// 2) Add more features to explain the analysis
-// 3) Change the prediction point
-// 4) Accept that maybe there isn't a good correlation
+/** IF Prediction was bad !
+ * 1) Adjust the parameters of the analysis
+ * 2) Add more features to explain the analysis
+ * 3) Change the prediction point
+ * 4) Accept that maybe there isn't a good correlation
+ *  */ 
 
+/** Fundamental of Machine LEarning
+ * 1) Features vs labels
+ * 2) Test vs Training set of data
+ * 3) Feature Normalization
+ * 4) Feature selection
+ */
 
 /***********************************************************************************/
 
