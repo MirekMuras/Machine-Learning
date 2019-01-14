@@ -22,8 +22,6 @@ function runAnalysis() {
       .first()
       .parseInt()
       .value()
-
-    console.log('The ball will probably fall into ',bucket);
 }
 
 function distance(point) {
