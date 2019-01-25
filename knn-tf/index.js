@@ -3,9 +3,16 @@ const tf = require ('@tensorflow/tfjs');
 const loadCSV = require('./load-csv');
 
 function knn (features, labels, predicitonPoint, k ) {
+    // impliment STANDARDISATION = Value - Average / StandardVariant 
+    const {mean, variance} = tf.moments(features, 0);
+
+    const scaledPrediction = predicitonPoint.sub(mean).div(variance.pow(0.5));
+
     return (
         features
-        .sub(predicitonPoint)
+        .sub(mean)
+        .div(variance.pow(0.5))
+        .sub(scaledPrediction)
         .pow(2)
         .sum(1)
         .pow(0.5)
@@ -18,7 +25,6 @@ function knn (features, labels, predicitonPoint, k ) {
     );   
 }
 
-
 // load data from .csv file into features and labels
 let { features, labels, testFeatures, testLabels} = loadCSV('kc_house_data.csv', 
     {
@@ -28,7 +34,6 @@ let { features, labels, testFeatures, testLabels} = loadCSV('kc_house_data.csv',
     labelColumns: ['price']
     }
 );
-
 
 features = tf.tensor(features);
 labels = tf.tensor(labels);
@@ -46,6 +51,9 @@ testFeatures.forEach((testPoint, i) => {
     });
 
 // using Standardization using tenserflow
-tf.moments();                       // calling method moments() directly from tenserflow.js
-cosnt StandardDeviation = sqrt(variance);
-const Standardization = (Value - Average) / StandardDeviation;
+/**
+ *  tf.moments();                       // calling method moments() directly from tenserflow.js
+ *  cosnt StandardDeviation = sqrt(variance);
+ *  const Standardization = (Value - Average) / StandardDeviation;
+ */
+
