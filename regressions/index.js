@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 require('@tensorflow/tfjs-node');
 const tf = require('@tensorflow/tfjs');
 const loadCSV = require('./load-csv');
@@ -11,12 +10,13 @@ let {features, labels, testFeatures, testLabels} = loadCSV('./cars.csv', {
   labelColumns: ['mpg']
 });
 
-
 const regression = new LinearRegression(features, labels, {
-  learningRate: 0.001,
-  iteration: 1,
+  learningRate: 0.3,
+  iteration: 100
 });
 
 regression.train();
 
-console.log('Updated M is :', regression.m, 'Updated B is :', regression.b);
+console.log('Updated M is :',regression.m, 'Updated B is :',regression.b);
+
+

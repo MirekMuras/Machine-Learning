@@ -1,35 +1,37 @@
+/* eslint-disable camelcase */
 const tf = require('@tensorflow/tfjs');
-const _ = require('loadash');
+const _ = require('lodash');
 
 class LinearRegression {
   constructor(features, labels, options) {
     this.features = features;
     this.labels = labels;
+
     this.options = Object.assign(
-      { learningRate: 0.1, iterations: 1000 },
-      options
-    );
+       { learningRate: 0.1, iterations: 1000 },
+       options
+      );
 
-    this.m = 100;
-    this.b = 500;
-    
+    this.m = 0;
+    this.b = 0;
   }
-
-
 
   gradientDecsent() {
-    const currentGuessesForMPG = this.features.map((row) => { return this.m * row[0] + this.b; });
-    const hx = currentGuessesForMPG.map((guess, i) => guess - this.labels[i][0]);
-    const B_Slope = ( (_sum(hx) * 2) / this.features.length; 
-     
-    const m_Slope = (_sum(currentGuessesForMPG.map((guess, i) =>{
-      return -1 * this.features[i][0] + (this.labels[i][0 - guess])
-    }) * 2) / this.features.length) ; 
+    const currentGuessesForMPG = this.features.map(row => {
+      return this.m * row[0] + this.b;
+    });
 
-    this.m = this.m - m_Slope * this.options.learningRate;
-    this.b = this.b - B_Slope * this.options.learningRate;
+    const bSlope = _.sum(currentGuessesForMPG.map((guess, i) => {
+      return guess - this.labels[i][0];
+    })) * 2 / this.features.length;
+
+    const mSlope = _.sum(currentGuessesForMPG.map((guess,i) => {
+      return -1 * this.features[i][0] * (this.labels[i][0] - guess);
+    })) * 2 / this.features.length;
+
+    this.m = this.m - mSlope * this.options.learningRate;
+    this.b = this.b - bSlope * this.options.learningRate;
   }
-
 
   train() {
     for (let i = 0; i < this.options.iterations; i++) {
