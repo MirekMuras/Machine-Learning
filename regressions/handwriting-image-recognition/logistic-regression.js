@@ -26,7 +26,7 @@ class LogisticRegression {
      .matMul(differences)
      .div(features.shape[0]);
 
-    this.weights = this.weights.sub(slopes.mul(this.options.learningRate));    // W = W - (slopes * learningRate)
+    return  this.weights.sub(slopes.mul(this.options.learningRate));    // W = W - (slopes * learningRate)
   }
 
   //@dev: 
@@ -39,24 +39,23 @@ class LogisticRegression {
       for (let j = 0; j < batchQuantity; j++) {
         const jIndex = j*this.options.batchSize;
         const {batchSize} = this.options;
+        
+        this.weights = tf.tidy(() => {
+          const features_Slice = this.features.slice(
+            [jIndex,0],
+            [batchSize, -1] 
+            );
+  
+            const labels_Slice = this.labels.slice(
+            [jIndex,0],
+            [batchSize, -1] 
+            );
 
-        const features_Slice = this.features.slice(
-          [jIndex,0],
-          [batchSize, -1] 
-        );
-
-          const labels_Slice = this.labels.slice(
-          [jIndex,0],
-          [batchSize, -1] 
-        );
-
-        this.gradientDecsent(features_Slice, labels_Slice);        
-      }
-
-      this.recordCost
+            return this.gradientDecsent(features_Slice, labels_Slice);
+           });             
+         }
       
-      
-      ;
+      this.recordCost();
       this.update_Learning_Rate();
     }
   }
@@ -111,43 +110,46 @@ class LogisticRegression {
   // build vectorized MSE method 
   recordCost () {
     const m = this.features.shape[0];
-    const hx = this.features.matMul(this.weights).sigmoid();
     const y = this.labels;
 
+    const cost = tf.tidy(() => {
+      const hx = this.features.matMul(this.weights).sigmoid();
 
-    //@dev: p = (y' * log(hx))
-    const J = y
-    .transpose()
-    .matMul(hx.log());
-
-    //@dev: (1-y)' * log(1-hx)
-    const p = y
-    .mul(-1)
-    .add(1)
-    .transpose()
-    .matMul(hx
+      //@dev: p = (y' * log(hx))
+      const J = y.transpose().matMul(hx.add(1e-7).log());
+  
+      //@dev: (1-y)' * log(1-hx)
+      const p = y
       .mul(-1)
       .add(1)
-      .log()
-    );
-
-   //@dev: -(1/m) * J + p
-    const cost = J.add(p).div(m).mul(-1).get(0,0);
+      .transpose()
+      .matMul(hx
+        .mul(-1)
+        .add(1)
+        .add(1e-7)          // Add a constant to avoid log(0) , log(0) == infinity , 1e-7 == 1 x 10 ^ -7 = 0.00000001
+        .log()
+      );  
+     //@dev: -(1/m) * J + p
+      return J.add(p).div(m).mul(-1).get(0,0);
+    });   
 
     this.cost_History_Array.unshift(cost);
-
-
   }
 
   /** Custom Learning Rate Optimizier
    * - Calculate the exact iteration value of MSE , 
    *   store and compare against tth eold MSE   */
   update_Learning_Rate() {
-    if (this.cost_History_Array.length < 2) return;        // if empty or just one , return
+    if (this.cost_History_Array.length < 2) {
+      return;
+    }        // if empty or just one , return
     // if MSE gretaer then the old MSE , divide by 2
-    if (this.cost_History_Array[0] > this.cost_History_Array[1]) this.options.learningRate /= 2 ;   
+    if (this.cost_History_Array[0] > this.cost_History_Array[1]){ 
+      this.options.learningRate /= 2 ;   
     // if MSE smaller than , we are going in the right direction, multiply by 0.5
-    else this.options.learningRate *= 0.5;
+    }else {
+      this.options.learningRate *= 1.05;
+    }
   }
 
 }
